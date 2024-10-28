@@ -1,15 +1,85 @@
-import { users } from "../dummyData/data.js";
+
+import User from "../models/user.models.js";
+import bcryptjs from "bcryptjs";
 
 const userResolver = {
-    Query: {
-        users: () => {
-            return users;  // This should return the full users array
+    Mutation: {
+        signup: async (_, { input }, context) => {
+            try {
+                const { username, name, password, gender } = input
+                if (!username || !name || !password || !gender) throw new Error("All fields are required!")
+
+                const exitedUser = await User.findOne({ username })
+                if (exitedUser) throw new Error("User with this username already exists")
+
+                const salt = await bcryptjs.genSalt(10)
+                const hashPassword = await bcryptjs.hash(password, salt)
+                const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`
+                const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`
+
+                const newUser = new User({
+                    username,
+                    name,
+                    password: hashPassword,
+                    gender,
+                    profilePicture: gender === "Male" ? boyProfilePic : girlProfilePic
+                })
+
+                await newUser.save()
+                await context.login(newUser)
+                return newUser
+            } catch (error) {
+                console.error(`Error in signup`, error)
+                throw new Error(error.message || 'Internal server error')
+            }
         },
-        user: (_, { userId }) => {
-            return users.find((user) => user._id === userId);  // Correct comparison with '==='
+        login: async (_, { input }, context) => {
+            try {
+                const { username, password } = input
+                const { user } = await context.authenticate('graphql-local', { username, password })
+                await context.login(user)
+
+                return user
+            } catch (error) {
+                console.error('Error in login', error)
+                throw new Error(error.message || 'Internal server error')
+            }
+        },
+        logout: async (_, _, { context }) => {
+            try {
+                await context.logout()
+                req.session.destroy((err) => {
+                    if (err) throw err
+                })
+                res.clearCookie("connect.sid")
+                return { message: "Logged out successfully" }
+            } catch (error) {
+                console.error('Error in logout', error)
+                throw new Error(error.message || 'Internal server error')
+            }
+        }
+    },
+    Query: {
+        authUser: async (_, _, context) => {
+            try {
+                const user = await context.getUser()
+                return user;
+            } catch (error) {
+                console.error("Error in authUser", error)
+                throw new Error("Internal server error")
+            }
+        },
+        user: async (_, { userId }) => {
+            try {
+                const user = await User.findById(userId);
+                return user;
+            } catch (error) {
+                console.error("Error in user", error)
+                throw new Error("Internal server error")
+            }
         },
     },
-    Mutation: {},
+    // todo -> todo transaction relations
 };
 
 export default userResolver;
