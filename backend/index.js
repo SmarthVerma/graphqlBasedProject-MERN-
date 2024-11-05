@@ -51,7 +51,7 @@ app.use(passport.session());
 
 await server.start()
 
-app.use("/",
+app.use("/graphql",
     express.json(),
     cors({
         origin: "http://localhost:3000",
@@ -65,6 +65,7 @@ app.use("/",
 await new Promise((resolve) =>
     httpServer.listen({ port }, resolve),
 );
+console.log('CheckBefore')
 await connectDB() // now connect to server
 
 console.log(`🚀 Server ready at http://localhost:4000/`);
