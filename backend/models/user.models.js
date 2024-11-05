@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         required: true,
-        enum: ['Male', 'Female', 'Other'], // Restrict gender to these values
+        enum: ['male', 'female', 'other'], // Restrict gender to these values
     }
 }, { timestamps: true });
 

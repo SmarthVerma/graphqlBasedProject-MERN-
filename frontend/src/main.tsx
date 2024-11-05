@@ -6,8 +6,9 @@ import App from "./App.tsx";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://flyby-router-demo.herokuapp.com/",
+  uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache(),
+  credentials: "include", // This tells Appolo client to send cookies along with every request to the server
 });
 
 createRoot(document.getElementById("root")!).render(
