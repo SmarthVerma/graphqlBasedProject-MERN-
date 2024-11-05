@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import { BackgroundWaves } from "./components/BackgroundWaves";
+import { GridBackground } from "./components/GridBackground";
 
 function AppRoutes() {
   return (
@@ -14,12 +14,19 @@ function AppRoutes() {
           <Route
             path="/signup"
             element={
-              <BackgroundWaves>
+              <GridBackground>
                 <Signup />
-              </BackgroundWaves>
+              </GridBackground>
             }
           />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <GridBackground>
+                <Login />
+              </GridBackground>
+            }
+          />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
