@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpSchema from "@/schemas/SignupSchema";
@@ -19,6 +18,7 @@ import { useMutation } from "@apollo/client";
 import { SIGNUP } from "@/graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
 
 function Signup() {
   const form = useForm<z.infer<typeof SignUpSchema>>({
@@ -32,11 +32,11 @@ function Signup() {
     },
   });
 
-  const [signupUser, { loading, error }] = useMutation(SIGNUP);
+  const [signupUser, { loading, error }] = useMutation(SIGNUP, {
+    refetchQueries: [{ query: GET_AUTHENTICATED_USER }],
+  });
 
   const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
-    console.log("This is your data", data);
-
     try {
       await signupUser({
         variables: {

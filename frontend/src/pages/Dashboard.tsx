@@ -1,15 +1,16 @@
 import AuthNavbar from "@/components/AuthNavBar";
 import { AvatarProfile } from "@/components/AvatarProfile";
-import React from "react";
+import Test from "@/components/Test";
+import TransactionForm from "@/components/TransactionForm";
+import { useApolloClient, gql } from "@apollo/client";
 
 function Dashboard() {
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full min-h-screen border">
       <AuthNavbar />
-      <div className="m-20">
-        <AvatarProfile />
-      </div>
-      
+      <AvatarProfile />
+      <TransactionForm />
+      {/* <Test /> */}
     </div>
   );
 }

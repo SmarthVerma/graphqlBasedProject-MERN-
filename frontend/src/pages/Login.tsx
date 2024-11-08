@@ -15,25 +15,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MovingBorder } from "@/components/MovingBorder";
 import { Link } from "react-router-dom"; // Import Link if you're using React Router
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "@/graphql/mutations/user.mutation";
+import toast from "react-hot-toast";
 
 function Login() {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: z.infer<typeof LoginSchema>) => {
+  const [login, { loading }] = useMutation(LOGIN);
+  const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     console.log("This is your data", data);
-    // Handle login logic here, like sending data to an API
+
+    try {
+      await login({
+        variables: {
+          input: data,
+        },
+      });
+      toast.success("Logged in successfully!");
+    } catch (error: any) {
+      console.log("Error in login", error);
+      toast.error("Error " + error.message);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="bg-gradient-to-r from-black to-gray-950 p-8 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-[rgba(156, 163, 175, 0.5)] max-w-md w-full">
-        {" "}
         <h1 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-white">
           Welcome to
           <p className="text-orange-400 inline text-3xl "> ExpenseMaster!</p>
@@ -52,17 +66,17 @@ function Login() {
             <div className="space-y-2">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem className="space-y-0">
                     <FormLabel className="text-gray-700 dark:text-gray-300">
-                      Email
+                      Username
                     </FormLabel>
                     <FormControl>
                       <Input
                         className="dark:bg-gray-700 dark:text-white"
-                        type="email"
-                        placeholder="you@example.com"
+                        type="text"
+                        placeholder="Username"
                         {...field}
                       />
                     </FormControl>
