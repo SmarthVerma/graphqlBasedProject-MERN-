@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,9 +24,12 @@ import {
 import { useMutation } from "@apollo/client";
 import { CREATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
 import toast from "react-hot-toast";
+import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
 // Define schema using zod based on the CreateTransactionInput
 
 function TransactionForm() {
+  const [categoryStyles, setCategoryStyles] = useState<any>("");
+
   const form = useForm<z.infer<typeof CreationTransactionSchema>>({
     resolver: zodResolver(CreationTransactionSchema),
     defaultValues: {
@@ -39,10 +42,23 @@ function TransactionForm() {
     },
   });
 
+  const { watch } = form;
+  const category = watch("category");
+  console.log("this is category", category);
+
+  useEffect(() => {
+    if (category) {
+      if (category == SAVING) setCategoryStyles(CATEGORY_STYLES.SAVING);
+      else if (category == EXPENSE) setCategoryStyles(CATEGORY_STYLES.EXPENSE);
+      else setCategoryStyles(CATEGORY_STYLES.INVESTMENT);
+    }
+  }, [category]);
+  console.log("cartygoryStyle", categoryStyles);
   const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION);
   const onSubmit = async (data: z.infer<typeof CreationTransactionSchema>) => {
     console.log("Transaction Data:", data);
     try {
+      console.log("Transaction createded inputData", data);
       await createTransaction({ variables: { input: data } });
       toast.success("Transaction created successfully!");
     } catch (error) {
@@ -52,7 +68,7 @@ function TransactionForm() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center my-8">
+    <div className="flex flex-col flex-1 items-center justify-center my-8">
       <div className="bg-gradient-to-r from-black to-gray-950 p-8 rounded-lg shadow-lg border border-gray-700 max-w-5xl  w-full">
         <h1 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-white">
           Add a New
@@ -94,15 +110,24 @@ function TransactionForm() {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="mx-auto  text-center border">
-                      <FormLabel>Category</FormLabel>
-                    </div>
+                    <FormLabel>Payment Type</FormLabel>
                     <FormControl>
-                      <Input
-                        className="dark:bg-gray-700 dark:text-white"
-                        placeholder="e.g., Food, Transport"
-                        {...field}
-                      />
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          style={categoryStyles}
+                          className={`w-[180px] dark:bg-gray-700 dark:text-white `}
+                        >
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                        <SelectContent className={` dark:text-white`}>
+                          <SelectItem value="SAVING">Saving</SelectItem>
+                          <SelectItem value="EXPENSE">Expense</SelectItem>
+                          <SelectItem value="INVESTMENT">Investment</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -118,10 +143,10 @@ function TransactionForm() {
                   <FormLabel>Payment Type</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-[180px] dark:bg-gray-700 dark:text-white">
                         <SelectValue placeholder="Select Payment Type" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="dark:bg-gray-700 dark:text-white">
                         <SelectItem value="cash">Cash</SelectItem>
                         <SelectItem value="card">Card</SelectItem>
                         <SelectItem value="other">Other</SelectItem>

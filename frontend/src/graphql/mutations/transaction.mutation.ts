@@ -14,3 +14,18 @@ export const CREATE_TRANSACTION = gql`
     }
   }
 `;
+
+export const DELETE_TRANSACTION = gql`
+  mutation deleteTransaction($transactionId: ID!) {
+    deleteTransaction(transactionId: $transactionId) {
+      _id
+      userId
+      description
+      paymentType
+      category
+      amount
+      location
+      date
+    }
+  }
+`;
