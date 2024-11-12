@@ -45,13 +45,14 @@ const userResolver = {
                 throw new Error(error.message || 'Internal server error')
             }
         },
-        logout: async (parent, _, { context }) => {
+        logout: async (parent, _,context ) => {
             try {
+                console.log({context})
                 await context.logout()
-                req.session.destroy((err) => {
+                context.req.session.destroy((err) => {
                     if (err) throw err
                 })
-                res.clearCookie("connect.sid")
+                context.res.clearCookie("connect.sid")
                 return { message: "Logged out successfully" }
             } catch (error) {
                 console.error('Error in logout', error)

@@ -3,8 +3,13 @@ import { AvatarProfile } from "@/components/AvatarProfile";
 import { Cards } from "@/components/Cards";
 import PieChart from "@/components/PieChart";
 import TransactionForm from "@/components/TransactionForm";
+import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
+import { Transaction } from "@/graphql/types";
+import { useQuery } from "@apollo/client";
 
 function Dashboard() {
+    const {data: cardData, loading } = useQuery<Transaction>(GET_ALL_TRANSACTION)
+    console.log('this is ur card', cardData)
   return (
     <div className="w-full min-h-screen border">
       <AuthNavbar />
@@ -14,7 +19,7 @@ function Dashboard() {
         <TransactionForm />
       </div>
       <div className="bg-black">
-        <Cards />
+        <Cards cardData={cardData}/>
       </div>
     </div>
   );

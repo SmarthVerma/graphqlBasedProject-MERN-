@@ -7,7 +7,7 @@ import { GraphQLLocalStrategy } from "graphql-passport";
 export const configurePassport = async () => {
     passport.use(
         new GraphQLLocalStrategy(async (username, password, done) => {
-            try {
+            try {   
                 const user = await User.findOne({ username })
                 if (!user) throw new Error("Invalid username or password")
 

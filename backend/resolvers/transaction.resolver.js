@@ -28,6 +28,7 @@ const transactionResolver = {
     Mutation: {
         createTransaction: async (_, { input }, context) => {
             try {
+                console.log('In server Input', input)
                 const newTransaction = new Transaction({
                     ...input,
                     userId: context.getUser()._id

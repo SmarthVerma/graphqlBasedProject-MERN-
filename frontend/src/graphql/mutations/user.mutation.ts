@@ -8,6 +8,7 @@ export const SIGNUP = gql`
       username
       name
       gender
+      profilePicture
     }
   }
 `;
@@ -19,6 +20,7 @@ export const LOGIN = gql`
       username
       name
       gender
+      profilePicture
     }
   }
 `;

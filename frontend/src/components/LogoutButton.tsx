@@ -3,9 +3,10 @@ import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
 import { LOGOUT } from "@/graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
+import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
 
 function LogoutButton() {
-  const [logout, { loading }] = useMutation(LOGOUT);
+  const [logout, { loading }] = useMutation(LOGOUT, {refetchQueries: [GET_AUTHENTICATED_USER]});
   const handleLogout = async () => {
     try {
       await logout();

@@ -28,13 +28,13 @@ import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
 // Define schema using zod based on the CreateTransactionInput
 
 function TransactionForm() {
-  const [categoryStyles, setCategoryStyles] = useState<any>("");
+  const [categoryStyles, setCategoryStyles] = useState<any>({});
 
   const form = useForm<z.infer<typeof CreationTransactionSchema>>({
     resolver: zodResolver(CreationTransactionSchema),
     defaultValues: {
       description: "",
-      paymentType: "cash",
+      paymentType: "Cash",
       category: "",
       amount: 0,
       location: "",
@@ -44,7 +44,7 @@ function TransactionForm() {
 
   const { watch } = form;
   const category = watch("category");
-  console.log("this is category", category);
+  // console.log("this is category", category);
 
   useEffect(() => {
     if (category) {
@@ -53,15 +53,20 @@ function TransactionForm() {
       else setCategoryStyles(CATEGORY_STYLES.INVESTMENT);
     }
   }, [category]);
-  console.log("cartygoryStyle", categoryStyles);
+
+
+  // console.log("cartygoryStyle", categoryStyles);
   const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION);
   const onSubmit = async (data: z.infer<typeof CreationTransactionSchema>) => {
     console.log("Transaction Data:", data);
+    data.amount = Number(data.amount)
     try {
       console.log("Transaction createded inputData", data);
       await createTransaction({ variables: { input: data } });
+      form.reset()
+      setCategoryStyles({})
       toast.success("Transaction created successfully!");
-    } catch (error) {
+    } catch (error)  {
       console.error("Error creating transaction:", error);
       toast.error("Failed to create transaction. Please try again.");
     }
@@ -147,9 +152,9 @@ function TransactionForm() {
                         <SelectValue placeholder="Select Payment Type" />
                       </SelectTrigger>
                       <SelectContent className="dark:bg-gray-700 dark:text-white">
-                        <SelectItem value="cash">Cash</SelectItem>
-                        <SelectItem value="card">Card</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="Cash">Cash</SelectItem>
+                        <SelectItem value="Card">Card</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

@@ -7,6 +7,7 @@ import { QUADTRATIC_MASK_IMAGE } from "./constants/constant";
 import { useApolloClient, useQuery } from "@apollo/client";
 import { GET_AUTHENTICATED_USER } from "./graphql/queries/user.query";
 import Test from "./components/Test";
+import React, { useEffect } from "react";
 
 const fetchImageAsBase64 = async (imageUrl: string) => {
   const response = await fetch(imageUrl);
@@ -24,32 +25,37 @@ function AppRoutes() {
   const { data, loading, error } = useQuery(GET_AUTHENTICATED_USER);
   const client = useApolloClient(); // Apollo Client instance
 
-  const profileUrl = data?.authUser.profilePicture;
+  const profileUrl = data?.authUser?.profilePicture || null;
+  console.log('profile outside', profileUrl, {loading});
 
-  if (
-    profileUrl &&
-    !client.readQuery({ query: GET_AUTHENTICATED_USER }).profileImageBase64
-  ) {
-    fetchImageAsBase64(profileUrl)
-      .then((base64Image) => {
-        // Store the base64 image in Apollo Cache
-        client.writeQuery({
-          query: GET_AUTHENTICATED_USER,
-          data: {
-            authUser: {
-              ...data.authUser,
-              profileImageBase64: base64Image,
-              test:"Hey sammy"
-            },
+  useEffect(() => {
+    if (!loading && data) { // Ensure data is available and loading is complete
+      const cacheData = client.readQuery({ query: GET_AUTHENTICATED_USER });
+      
+if (profileUrl && cacheData?.authUser && !cacheData.authUser.profileImageBase64) {
+  console.log('Inside if condition for fetching profile image');
+  fetchImageAsBase64(profileUrl)
+    .then((base64Image) => {
+      console.log('Image fetched in base64 format:', base64Image);
+      client.cache.writeQuery({
+        query: GET_AUTHENTICATED_USER,
+        data: {
+          ...cacheData,
+          authUser: {
+            ...cacheData.authUser,
+            // profileImageBase64: base64Image,
+            smarth: "Bhai",  // assuming this is a custom field you're adding
           },
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching image:", error);
+        },
       });
-  }
-
-  if (loading)
+    })
+        .catch((error) => {
+            console.error('Error fetching image:', error);
+          });
+      }
+    }
+  }, [data, loading, client, profileUrl]); 
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
@@ -60,23 +66,28 @@ function AppRoutes() {
         </div>
       </div>
     );
+  }
 
-  if (error)
+  // Error state
+  if (error) {
+    console.error("Error fetching authenticated user:", error);
     return (
-      <div className="flex items-center justify-center min-h-screen ">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center flex flex-col justify-center items-center gap-3">
           <img
             className="w-16"
             src="https://juststickers.in/wp-content/uploads/2019/11/Internet-error.png"
-            alt=""
+            alt="Error"
           />
-          <h1 className=" text-xl italic font-semibold">
+          <h1 className="text-xl italic font-semibold">
             Something went wrong. Please try again later.
           </h1>
         </div>
       </div>
     );
+  }
 
+  // Main routing
   return (
     <div>
       <BrowserRouter>

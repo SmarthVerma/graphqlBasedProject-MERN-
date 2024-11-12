@@ -13,11 +13,11 @@ const transactionSchema = new mongoose.Schema({
     paymentType: {
         type: String,
         required: true,
-        enum: ['Credit', 'Debit', 'Cash', 'Other'],  // You can add more payment types if needed
+        enum: ['Cash', 'Card', 'Other'],  // You can add more payment types if needed
     },
     category: {
         type: String,
-        enum: ['saving', 'expense', 'investment'],
+        enum: ['SAVING', 'EXPENSE', 'INVESTMENT'],
         required: true,
     },
     amount: {
