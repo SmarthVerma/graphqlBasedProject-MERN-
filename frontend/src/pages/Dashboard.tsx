@@ -8,8 +8,10 @@ import { Transaction } from "@/graphql/types";
 import { useQuery } from "@apollo/client";
 
 function Dashboard() {
-    const {data: cardData, loading } = useQuery<Transaction>(GET_ALL_TRANSACTION)
+const { data: cardData, loading, error } = useQuery<{ transactions: Transaction[] }>(GET_ALL_TRANSACTION);
     console.log('this is ur card', cardData)
+    if(loading) return <>Ruk jaoo</>
+    if(error) return null;
   return (
     <div className="w-full min-h-screen border">
       <AuthNavbar />

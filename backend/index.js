@@ -37,7 +37,7 @@ const server = new ApolloServer({
 
 // Middleware
 app.use(cors({
-    origin: "http://localhost:5173", // Removed trailing slash
+    origin: "http://localhost:5174", // Removed trailing slash
     credentials: true,
 }));
 app.use(express.json()); // Make sure JSON body parsing is applied globally

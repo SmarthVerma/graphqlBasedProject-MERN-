@@ -13,8 +13,6 @@ const client = new ApolloClient({
 
 createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>
-    <StrictMode>
       <App />
-    </StrictMode>
   </ApolloProvider>
 );

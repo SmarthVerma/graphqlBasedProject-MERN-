@@ -1,4 +1,5 @@
 // Define types for input objects for each mutation
+
 export interface CreateTransactionInput {
   userId: string;
   description: string;

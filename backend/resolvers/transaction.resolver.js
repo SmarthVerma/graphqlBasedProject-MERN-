@@ -4,10 +4,12 @@ const transactionResolver = {
     Query: {
         transactions: async (parent, _, context) => {
             try {
+                console.log('this is serverSide first step',)
                 if (!context.getUser()) throw new Error("Unauthorized")
                 const userId = await context.getUser()._id
 
                 const transactions = await Transaction.find({ userId });
+                console.log('this in serverSide', transactions)
                 return transactions
             } catch (error) {
                 console.error("Error getting transactions", error)

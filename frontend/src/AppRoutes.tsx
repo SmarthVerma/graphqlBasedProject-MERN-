@@ -26,8 +26,7 @@ function AppRoutes() {
   const client = useApolloClient(); // Apollo Client instance
 
   const profileUrl = data?.authUser?.profilePicture || null;
-  console.log('profile outside', profileUrl, {loading});
-
+  console.log('USER!!!::', data)
   useEffect(() => {
     if (!loading && data) { // Ensure data is available and loading is complete
       const cacheData = client.readQuery({ query: GET_AUTHENTICATED_USER });

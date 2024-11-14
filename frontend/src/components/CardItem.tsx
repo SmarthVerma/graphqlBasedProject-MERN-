@@ -9,34 +9,26 @@ import { formatDate } from "../lib/helpers/formateDate";
 import toast from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import { DELETE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import { Transaction } from "@/graphql/types";
 
-type Category = "saving" | "expense" | "investment";
-type Transaction = {
-  _id: string;
-  category: Category;
-  amount: number;
-  location?: string;
-  date: string;
-  paymentType: string;
-  description: string;
+const categoryColorMap: Record<string, string> = {
+  SAVING: "from-green-700 to-green-400",
+  EXPENSE: "from-pink-800 to-pink-600",
+  INVESTMENT: "from-blue-700 to-blue-400",
 };
 
-const categoryColorMap: Record<Category, string> = {
-  saving: "from-green-700 to-green-400",
-  expense: "from-pink-800 to-pink-600",
-  investment: "from-blue-700 to-blue-400",
-};
 
-const CardItem = ({
+
+export const CardItem = ({
   transaction,
-  authUser,
 }: {
   transaction: Transaction;
-  authUser: { profilePicture?: string };
 }) => {
   let { category, amount, location, date, paymentType, description } =
     transaction;
-  const cardClass = categoryColorMap[category];
+
+   category as string
+  const cardClass = categoryColorMap[transaction?.category] 
   const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION);
 
   description = description[0]?.toUpperCase() + description.slice(1);
@@ -92,15 +84,11 @@ const CardItem = ({
         </p>
         <div className="flex justify-between items-center">
           <p className="text-xs text-black font-bold">{formattedDate}</p>
-          <img
-            src={authUser?.profilePicture}
-            className="h-8 w-8 border rounded-full"
-            alt=""
-          />
+   img
         </div>
       </div>
     </div>
   );
 };
 
-export default CardItem;
+

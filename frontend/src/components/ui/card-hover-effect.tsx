@@ -3,17 +3,15 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CardItem from "../CardItem";
+import {CardItem} from "../CardItem";
+import { Transaction } from "@/graphql/types";
+
 
 export const HoverEffect = ({
   items,
   className,
 }: {
-  items: {
-    title: string;
-    description: string;
-    link: string;
-  }[];
+  items: Transaction[]
   className?: string;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -25,10 +23,9 @@ export const HoverEffect = ({
         className
       )}
     >
-      {items.map((item, idx) => (
-        <Link
-          to={item?.link}
-          key={item?.link}
+      {items?.map((item, idx) => (
+        <div
+          key={item?._id}
           className="relative group  block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
@@ -50,8 +47,8 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <CardItem />
-        </Link>
+          <CardItem transaction={item}/>
+        </div>
       ))}
     </div>
   );
