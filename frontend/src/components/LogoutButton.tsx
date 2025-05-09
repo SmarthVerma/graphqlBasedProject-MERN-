@@ -1,15 +1,22 @@
 import { useMutation } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
 import { LOGOUT } from "@/graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
 import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
+import { useNavigate } from "react-router-dom";
+import { time } from "console";
 
 function LogoutButton() {
-  const [logout, { loading }] = useMutation(LOGOUT, {refetchQueries: [GET_AUTHENTICATED_USER]});
+  const client = useApolloClient();
+  const navigate = useNavigate();
+  const [logout, { loading }] = useMutation(LOGOUT);
   const handleLogout = async () => {
     try {
       await logout();
+      await client.clearStore();
+      await client.refetchQueries({ include: [GET_AUTHENTICATED_USER] });
       toast.success("Logout successfully");
     } catch (error) {
       console.log(`Error in logout`, error);

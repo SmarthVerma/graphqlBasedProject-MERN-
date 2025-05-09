@@ -14,7 +14,7 @@ import connectMongo from 'connect-mongodb-session';
 import { buildContext } from "graphql-passport";
 import { configurePassport } from './passport/passport.config.js';
 
-// Configuration
+
 configurePassport();
 dotenv.config();
 const app = express();
@@ -24,8 +24,9 @@ const port = 4000;
 const MongoDbStore = connectMongo(session);
 const store = new MongoDbStore({
     uri: process.env.MONGODB_URI,
-    collection: "session",
+    collection: "session ",
 });
+
 
 store.on('error', (err) => console.log('Error on mongoDbStore', err));
 
@@ -35,9 +36,11 @@ const server = new ApolloServer({
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
 });
 
+
+
 // Middleware
 app.use(cors({
-    origin: "http://localhost:5174", // Removed trailing slash
+    origin: ['http://localhost:5173', 'http://localhost:5174'], // allow requests from localhost:4000    
     credentials: true,
 }));
 app.use(express.json()); // Make sure JSON body parsing is applied globally
@@ -57,6 +60,13 @@ app.use(passport.session());
 // Start Apollo Server
 await server.start();
 
+
+app.post('/callback', (req, res) => {
+    console.log('Received callback:', req.body);
+    res.sendStatus(200);
+});
+
+
 app.use("/graphql",
     expressMiddleware(server, {
         context: async ({ req, res }) => buildContext({ req, res }),
@@ -66,6 +76,7 @@ app.use("/graphql",
 await new Promise((resolve) =>
     httpServer.listen({ port }, resolve),
 );
+
 console.log('CheckBefore');
 await connectDB(); // Connect to database
 

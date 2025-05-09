@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import { DELETE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
 import { Transaction } from "@/graphql/types";
+import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
 
 const categoryColorMap: Record<string, string> = {
   SAVING: "from-green-700 to-green-400",
@@ -17,18 +18,12 @@ const categoryColorMap: Record<string, string> = {
   INVESTMENT: "from-blue-700 to-blue-400",
 };
 
-
-
-export const CardItem = ({
-  transaction,
-}: {
-  transaction: Transaction;
-}) => {
+export const CardItem = ({ transaction }: { transaction: Transaction }) => {
   let { category, amount, location, date, paymentType, description } =
     transaction;
 
-   category as string
-  const cardClass = categoryColorMap[transaction?.category] 
+  category as string;
+  const cardClass = categoryColorMap[transaction?.category];
   const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION);
 
   description = description[0]?.toUpperCase() + description.slice(1);
@@ -41,6 +36,7 @@ export const CardItem = ({
     try {
       await deleteTransaction({
         variables: { transactionId: transaction._id },
+        refetchQueries: [GET_ALL_TRANSACTION],
       });
       toast.success("Transaction deleted successfully");
     } catch (error: any) {
@@ -50,7 +46,7 @@ export const CardItem = ({
   };
 
   return (
-    <div className={`rounded-md p-4 bg-gradient-to-br ${cardClass}`}>
+    <div className={`rounded-md relative z-30 p-4 bg-gradient-to-br ${cardClass}`}>
       <div className="flex flex-col gap-3">
         <div className="flex flex-row items-center justify-between">
           <h2 className="text-lg font-bold text-white">{category}</h2>
@@ -84,11 +80,8 @@ export const CardItem = ({
         </p>
         <div className="flex justify-between items-center">
           <p className="text-xs text-black font-bold">{formattedDate}</p>
-   img
         </div>
       </div>
     </div>
   );
 };
-
-

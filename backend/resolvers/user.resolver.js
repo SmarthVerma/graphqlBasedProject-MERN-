@@ -8,8 +8,9 @@ const userResolver = {
             try {
                 const { username, name, password, gender } = input
                 if (!username || !name || !password || !gender) throw new Error("All fields are required!")
-
+                console.log('someerror?',)
                 const exitedUser = await User.findOne({ username })
+                console.log('after?',)
                 if (exitedUser) throw new Error("User with this username already exists")
 
                 const salt = await bcryptjs.genSalt(10)

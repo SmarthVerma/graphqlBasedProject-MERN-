@@ -1,12 +1,11 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
 import App from "./App.tsx";
+import "./index.css";
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  uri: `http://${window.location.hostname === 'localhost' ? 'localhost' : '10.0.2.2'}:4000/graphql`,
   cache: new InMemoryCache(),
   credentials: "include", // This tells Appolo client to send cookies along with every request to the server
 });

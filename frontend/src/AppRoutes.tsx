@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import TransactionEditPage from "./pages/TransactionEditPage";
 import { GridBackground } from "./components/GridBackground";
 import { QUADTRATIC_MASK_IMAGE } from "./constants/constant";
 import { useApolloClient, useQuery } from "@apollo/client";
@@ -26,40 +27,45 @@ function AppRoutes() {
   const client = useApolloClient(); // Apollo Client instance
 
   const profileUrl = data?.authUser?.profilePicture || null;
-  console.log('USER!!!::', data)
+  console.log("USER!!!::", data, error);
   useEffect(() => {
-    if (!loading && data) { // Ensure data is available and loading is complete
+    if (!loading && data) {
+      // Ensure data is available and loading is complete
       const cacheData = client.readQuery({ query: GET_AUTHENTICATED_USER });
-      
-if (profileUrl && cacheData?.authUser && !cacheData.authUser.profileImageBase64) {
-  console.log('Inside if condition for fetching profile image');
-  fetchImageAsBase64(profileUrl)
-    .then((base64Image) => {
-      console.log('Image fetched in base64 format:', base64Image);
-      client.cache.writeQuery({
-        query: GET_AUTHENTICATED_USER,
-        data: {
-          ...cacheData,
-          authUser: {
-            ...cacheData.authUser,
-            // profileImageBase64: base64Image,
-            smarth: "Bhai",  // assuming this is a custom field you're adding
-          },
-        },
-      });
-    })
-        .catch((error) => {
-            console.error('Error fetching image:', error);
+
+      if (
+        profileUrl &&
+        cacheData?.authUser &&
+        !cacheData.authUser.profileImageBase64
+      ) {
+        console.log("Inside if condition for fetching profile image");
+        fetchImageAsBase64(profileUrl)
+          .then((base64Image) => {
+            console.log("Image fetched in base64 format:", base64Image);
+            client.cache.writeQuery({
+              query: GET_AUTHENTICATED_USER,
+              data: {
+                ...cacheData,
+                authUser: {
+                  ...cacheData.authUser,
+                  // profileImageBase64: base64Image,
+                  smarth: "Bhai", // assuming this is a custom field you're adding
+                },
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching image:", error);
           });
       }
     }
-  }, [data, loading, client, profileUrl]); 
+  }, [data, loading, client, profileUrl]);
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <h1 className="mt-4 text-xl font-semibold text-blue-600">
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+          <h1 className="mt-4 text-xl font-semibold text-orange-600">
             Loading, please wait...
           </h1>
         </div>
@@ -80,6 +86,7 @@ if (profileUrl && cacheData?.authUser && !cacheData.authUser.profileImageBase64)
           />
           <h1 className="text-xl italic font-semibold">
             Something went wrong. Please try again later.
+            {error.message}
           </h1>
         </div>
       </div>
@@ -124,6 +131,18 @@ if (profileUrl && cacheData?.authUser && !cacheData.authUser.profileImageBase64)
               ) : (
                 <GridBackground containerClass={QUADTRATIC_MASK_IMAGE}>
                   <Dashboard />
+                </GridBackground>
+              )
+            }
+          />
+          <Route
+            path="/transaction/:id"
+            element={
+              !data.authUser ? (
+                <Navigate to="/login" />
+              ) : (
+                <GridBackground containerClass={QUADTRATIC_MASK_IMAGE}>
+                  <TransactionEditPage />
                 </GridBackground>
               )
             }

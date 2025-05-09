@@ -5,13 +5,25 @@ import { CATEGORY_STYLES } from "@/constants/constant";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function PieChart() {
+function PieChart({ transactionData }: { transactionData: any }) {
+  console.log("this is transactionData", transactionData);
+  // const { data, loading, error } = useQuery(GET_ALL_TRANSACTION);
   const data = {
     labels: ["Saving", "Expense", "Investment"],
     datasets: [
       {
         label: "My First Dataset",
-        data: [300, 50, 100],
+        data: [
+          transactionData.transactions
+            .filter((t: any) => t.category === 'SAVING')
+            .reduce((sum: number, t: any) => sum + t.amount, 0),
+          transactionData.transactions
+            .filter((t: any) => t.category === 'EXPENSE')
+            .reduce((sum: number, t: any) => sum + t.amount, 0),
+          transactionData.transactions
+            .filter((t: any) => t.category === 'INVESTMENT')
+            .reduce((sum: number, t: any) => sum + t.amount, 0),
+        ],
         borderWidth: 1,
         spacing: 5,
         cutout: 100,
@@ -35,7 +47,7 @@ function PieChart() {
     },
   };
   return (
-    <div className=" self-top  flex justify-center">
+    <div className=" self-top w-1/3  flex justify-center">
       <Doughnut data={data} options={options} />
     </div>
   );

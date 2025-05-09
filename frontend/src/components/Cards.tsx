@@ -2,9 +2,9 @@ import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { Transaction } from "@/graphql/types";
 
 
-type Test = { transactions: Transaction[] } | undefined;
+type CardItems = { transactions: Transaction[] } | undefined;
 
-export function Cards({ cardData }: { cardData: Test }) {
+export function Cards({ cardData }: { cardData: CardItems }) {
   if (!cardData) return null; // filter out undefined here
 
   return (

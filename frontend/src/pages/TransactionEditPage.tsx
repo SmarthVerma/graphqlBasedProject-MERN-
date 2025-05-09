@@ -20,16 +20,28 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { useMutation } from "@apollo/client";
-import { CREATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
+} from "@/components/ui/select";
+import { useMutation, useQuery } from "@apollo/client";
+import { UPDATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
+import {
+  GET_ALL_TRANSACTION,
+  GET_TRANSACTION_BY_ID,
+} from "@/graphql/queries/transactions.query";
 import toast from "react-hot-toast";
 import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
-import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
-// Define schema using zod based on the CreateTransactionInput
+import { useParams, useNavigate } from "react-router-dom";
 
-function TransactionForm() {
+function TransactionEditPage() {
   const [categoryStyles, setCategoryStyles] = useState<any>({});
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { data, loading: loadingQuery } = useQuery(GET_TRANSACTION_BY_ID, {
+    variables: { transactionId: id },
+    fetchPolicy: "network-only",
+  });
+
+  console.log("transactio by id ", data, id);
 
   const form = useForm<z.infer<typeof CreationTransactionSchema>>({
     resolver: zodResolver(CreationTransactionSchema),
@@ -43,49 +55,66 @@ function TransactionForm() {
     },
   });
 
+  useEffect(() => {
+    if (data?.transaction) {
+      form.reset({
+        description: data.transaction.description,
+        paymentType: data.transaction.paymentType,
+        category: data.transaction.category,
+        amount: data.transaction.amount,
+        location: data.transaction.location || "",
+        date: data.transaction.date.split("T")[0],
+      });
+    }
+  }, [data, form]);
+
   const { watch } = form;
   const category = watch("category");
-  // console.log("this is category", category);
 
   useEffect(() => {
     if (category) {
-      if (category == SAVING) setCategoryStyles(CATEGORY_STYLES.SAVING);
-      else if (category == EXPENSE) setCategoryStyles(CATEGORY_STYLES.EXPENSE);
+      if (category === SAVING) setCategoryStyles(CATEGORY_STYLES.SAVING);
+      else if (category === EXPENSE) setCategoryStyles(CATEGORY_STYLES.EXPENSE);
       else setCategoryStyles(CATEGORY_STYLES.INVESTMENT);
     }
   }, [category]);
 
-  // console.log("cartygoryStyle", categoryStyles);
-  const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION, {
+  const [updateTransaction, { loading }] = useMutation(UPDATE_TRANSACTION, {
     refetchQueries: [GET_ALL_TRANSACTION],
   });
-  const onSubmit = async (data: z.infer<typeof CreationTransactionSchema>) => {
-    console.log("Transaction Data:", data);
-    // Force category to EXPENSE
-    data.amount = Number(data.amount);
+
+  const onSubmit = async (input: z.infer<typeof CreationTransactionSchema>) => {
+    input.amount = Number(input.amount);
     try {
-      console.log("Transaction createded inputData", data);
-      await createTransaction({ variables: { input: data } });
-      form.reset();
-      setCategoryStyles({});
-      toast.success("Transaction created successfully!");
-    } catch (error) {
-      console.error("Error creating transaction:", error);
-      toast.error("Failed to create transaction. Please try again.");
+      await updateTransaction({
+        variables: {
+          input: {
+            ...input,
+            transactionId: id,
+          },
+        },
+      });
+      toast.success("Transaction updated successfully!");
+      navigate("/");
+    } catch (err) {
+      console.error("Error updating transaction:", err);
+      toast.error("Failed to update transaction. Please try again.");
     }
   };
 
+  if (loadingQuery) return <p>Loading transaction...</p>;
+
   return (
     <div className="flex flex-col flex-1 items-center justify-center my-8">
-      <div className="bg-gradient-to-r from-black to-gray-950 p-8 rounded-lg shadow-lg border border-gray-700 max-w-5xl  w-full">
+      <div className="bg-gradient-to-r from-black to-gray-950 p-8 rounded-lg shadow-lg border border-gray-700 max-w-5xl w-full">
         <h1 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-white">
-          Add a New
+          Edit
           <span className="text-orange-400 inline text-3xl"> Transaction</span>
         </h1>
         <div className="w-full flex justify-center">
           <MovingBorder>
             <p className="text-center p-2 text-gray-600 dark:text-gray-400">
-              Track your expenses effectively and take control of your spending.
+              Update your transaction details below.
             </p>
           </MovingBorder>
         </div>
@@ -120,7 +149,7 @@ function TransactionForm() {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Payment Type</FormLabel>
+                    <FormLabel>Category</FormLabel>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -128,7 +157,7 @@ function TransactionForm() {
                       >
                         <SelectTrigger
                           style={categoryStyles}
-                          className={`w-[180px] dark:bg-gray-700 dark:text-white `}
+                          className={`w-[180px] dark:bg-gray-700 dark:text-white`}
                         >
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
@@ -206,6 +235,7 @@ function TransactionForm() {
                 )}
               />
             </div>
+
             <div className="col-span-3">
               <FormField
                 control={form.control}
@@ -227,7 +257,7 @@ function TransactionForm() {
             </div>
             <div className="col-span-3">
               <Button type="submit" className="w-full mt-4">
-                Add Transaction
+                Update Transaction
               </Button>
             </div>
           </form>
@@ -237,4 +267,4 @@ function TransactionForm() {
   );
 }
 
-export default TransactionForm;
+export default TransactionEditPage;

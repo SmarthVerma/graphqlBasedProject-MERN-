@@ -19,6 +19,7 @@ import { useMutation } from "@apollo/client";
 import { LOGIN } from "@/graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
 import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
+import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
 
 function Login() {
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -29,21 +30,21 @@ function Login() {
     },
   });
 
-const [login, { loading }] = useMutation(LOGIN, {
-  refetchQueries: [GET_AUTHENTICATED_USER],
-  update(cache, { data }) {
-    if (data?.login) {
-      // Read the data from the existing GET_AUTHENTICATED_USER query in the cache
-      const existingUser = cache.readQuery({ query: GET_AUTHENTICATED_USER });
-      console.log("Existing User", existingUser)
-      // Write the updated user data to the cache
-      cache.writeQuery({
-        query: GET_AUTHENTICATED_USER,
-        data: { authUser: data.login },
-      });
-    }
-  },
-});
+  const [login, { loading }] = useMutation(LOGIN, {
+    refetchQueries: [GET_AUTHENTICATED_USER],
+    update(cache, { data }) {
+      if (data?.login) {
+        // Read the data from the existing GET_AUTHENTICATED_USER query in the cache
+        const existingUser = cache.readQuery({ query: GET_AUTHENTICATED_USER });
+        console.log("Existing User", existingUser);
+        // Write the updated user data to the cache
+        cache.writeQuery({
+          query: GET_AUTHENTICATED_USER,
+          data: { authUser: data.login },
+        });
+      }
+    },
+  });
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     console.log("This is your data", data);
 
