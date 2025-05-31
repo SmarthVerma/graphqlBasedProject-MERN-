@@ -6,7 +6,6 @@ import TransactionForm from "@/components/TransactionForm";
 import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
 import { Transaction } from "@/graphql/types";
 import { useQuery } from "@apollo/client";
-import { Loader } from "lucide-react";
 
 function Dashboard() {
   const {

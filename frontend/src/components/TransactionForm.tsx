@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { MovingBorder } from "@/components/MovingBorder";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,10 +8,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MovingBorder } from "@/components/MovingBorder";
+import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
+import { CREATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
+import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
 import { CreationTransactionSchema } from "@/schemas/TransactionSchema";
+import { useMutation } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import * as z from "zod";
 import {
   Select,
   SelectContent,
@@ -21,11 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useMutation } from "@apollo/client";
-import { CREATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
-import toast from "react-hot-toast";
-import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
-import { GET_ALL_TRANSACTION } from "@/graphql/queries/transactions.query";
 // Define schema using zod based on the CreateTransactionInput
 
 function TransactionForm() {
@@ -56,7 +56,7 @@ function TransactionForm() {
   }, [category]);
 
   // console.log("cartygoryStyle", categoryStyles);
-  const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION, {
+  const [createTransaction] = useMutation(CREATE_TRANSACTION, {
     refetchQueries: [GET_ALL_TRANSACTION],
   });
   const onSubmit = async (data: z.infer<typeof CreationTransactionSchema>) => {

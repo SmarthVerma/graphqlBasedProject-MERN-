@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { MovingBorder } from "@/components/MovingBorder";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,10 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MovingBorder } from "@/components/MovingBorder";
-import { CreationTransactionSchema } from "@/schemas/TransactionSchema";
 import {
   Select,
   SelectContent,
@@ -21,15 +16,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMutation, useQuery } from "@apollo/client";
+import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
 import { UPDATE_TRANSACTION } from "@/graphql/mutations/transaction.mutation";
 import {
   GET_ALL_TRANSACTION,
   GET_TRANSACTION_BY_ID,
 } from "@/graphql/queries/transactions.query";
+import { CreationTransactionSchema } from "@/schemas/TransactionSchema";
+import { useMutation, useQuery } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { CATEGORY_STYLES, EXPENSE, SAVING } from "@/constants/constant";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import * as z from "zod";
 
 function TransactionEditPage() {
   const [categoryStyles, setCategoryStyles] = useState<any>({});
@@ -79,7 +79,7 @@ function TransactionEditPage() {
     }
   }, [category]);
 
-  const [updateTransaction, { loading }] = useMutation(UPDATE_TRANSACTION, {
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, {
     refetchQueries: [GET_ALL_TRANSACTION],
   });
 

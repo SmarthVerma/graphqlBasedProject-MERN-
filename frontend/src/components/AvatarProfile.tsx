@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
-import { gql, useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 
 export function AvatarProfile() {
   const client = useApolloClient();

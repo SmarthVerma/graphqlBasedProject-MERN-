@@ -1,16 +1,12 @@
-import { useMutation } from "@apollo/client";
-import { useApolloClient } from "@apollo/client";
-import { Button } from "./ui/button";
-import { LogOut } from "lucide-react";
 import { LOGOUT } from "@/graphql/mutations/user.mutation";
-import toast from "react-hot-toast";
 import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
-import { useNavigate } from "react-router-dom";
-import { time } from "console";
+import { useApolloClient, useMutation } from "@apollo/client";
+import { LogOut } from "lucide-react";
+import toast from "react-hot-toast";
+import { Button } from "./ui/button";
 
 function LogoutButton() {
   const client = useApolloClient();
-  const navigate = useNavigate();
   const [logout, { loading }] = useMutation(LOGOUT);
   const handleLogout = async () => {
     try {

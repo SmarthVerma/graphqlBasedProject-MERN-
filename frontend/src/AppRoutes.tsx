@@ -1,14 +1,14 @@
+import { useApolloClient, useQuery } from "@apollo/client";
+import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { GridBackground } from "./components/GridBackground";
+import Test from "./components/Test";
+import { QUADTRATIC_MASK_IMAGE } from "./constants/constant";
+import { GET_AUTHENTICATED_USER } from "./graphql/queries/user.query";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import TransactionEditPage from "./pages/TransactionEditPage";
-import { GridBackground } from "./components/GridBackground";
-import { QUADTRATIC_MASK_IMAGE } from "./constants/constant";
-import { useApolloClient, useQuery } from "@apollo/client";
-import { GET_AUTHENTICATED_USER } from "./graphql/queries/user.query";
-import Test from "./components/Test";
-import React, { useEffect } from "react";
 
 const fetchImageAsBase64 = async (imageUrl: string) => {
   const response = await fetch(imageUrl);

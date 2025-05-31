@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
 import { Button } from "@/components/ui/moving-border";
+import { ReactNode } from "react";
 
 export function MovingBorder({ children }: { children: ReactNode }) {
   return (

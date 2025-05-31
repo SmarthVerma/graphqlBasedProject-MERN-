@@ -1,7 +1,5 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import SignUpSchema from "@/schemas/SignupSchema";
-import * as z from "zod";
+import { MovingBorder } from "@/components/MovingBorder";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,15 +8,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MovingBorder } from "@/components/MovingBorder";
-import { Link } from "react-router-dom"; // Import Link if using React Router
-import { useMutation } from "@apollo/client";
-import { SIGNUP } from "@/graphql/mutations/user.mutation";
-import toast from "react-hot-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SIGNUP } from "@/graphql/mutations/user.mutation";
 import { GET_AUTHENTICATED_USER } from "@/graphql/queries/user.query";
+import SignUpSchema from "@/schemas/SignupSchema";
+import { useMutation } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom"; // Import Link if using React Router
+import * as z from "zod";
 
 function Signup() {
   const form = useForm<z.infer<typeof SignUpSchema>>({
@@ -32,7 +32,7 @@ function Signup() {
     },
   });
 
-  const [signupUser, { loading, error }] = useMutation(SIGNUP, {
+  const [signupUser, { loading }] = useMutation(SIGNUP, {
     refetchQueries: [{ query: GET_AUTHENTICATED_USER }],
   });
 
