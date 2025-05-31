@@ -23,6 +23,8 @@ const client = new ApolloClient({
   credentials: "include",
 });
 
+console.log("this is the apiHostName", getApiHost());
+
 createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>
     <App />
