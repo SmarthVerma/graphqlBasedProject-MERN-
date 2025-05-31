@@ -4,14 +4,27 @@ import "./index.css";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
+const getApiHost = () => {
+  if (window.location.hostname === "localhost") {
+    // Web dev environment
+    return "localhost";
+  } else if (window.location.hostname === "10.0.2.2") {
+    // Android emulator
+    return "10.0.2.2";
+  } else {
+    // Production
+    return window.location.hostname; // This will be '59.178.196.155' or your domain
+  }
+};
+
 const client = new ApolloClient({
-  uri: `http://${window.location.hostname === 'localhost' ? 'localhost' : '10.0.2.2'}:4000/graphql`,
+  uri: `http://${getApiHost()}/graphql`,
   cache: new InMemoryCache(),
-  credentials: "include", // This tells Appolo client to send cookies along with every request to the server
+  credentials: "include",
 });
 
 createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>
-      <App />
+    <App />
   </ApolloProvider>
 );
