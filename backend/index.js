@@ -40,7 +40,7 @@ const server = new ApolloServer({
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'], // allow requests from localhost:4000    
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'], // allow requests from localhost:4000    
     credentials: true,
 }));
 app.use(express.json()); // Make sure JSON body parsing is applied globally

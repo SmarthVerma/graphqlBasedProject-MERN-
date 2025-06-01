@@ -2,12 +2,16 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package.json if it includes backend dependencies
-COPY ./package*.json ./
+# Install nodemon globally for development
+RUN npm install -g nodemon
+
+COPY package*.json ./
 RUN npm install
 
-# Copy only backend source code
+# Copy the rest (in development, this will be overridden by the bind mount)
 COPY . .
 
 EXPOSE 4000
-CMD ["node", "index.js"]  # Adjust to your actual backend entry file
+
+# Use nodemon to watch for changes
+CMD ["nodemon", "index.js"]
