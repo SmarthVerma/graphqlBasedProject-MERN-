@@ -7,7 +7,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 const getApiHost = () => {
   if (window.location.hostname === "localhost") {
     // Web dev environment
-    return "localhost";
+    return "localhost:4000";
   } else if (window.location.hostname === "10.0.2.2") {
     // Android emulator
     return "10.0.2.2";
