@@ -7,7 +7,7 @@ target "frontend" {
   dockerfile = "Dockerfile"
   tags = ["sm7rth/expensegraphql:frontend"]
   target = "prod"
-  platforms = ["linux/arm64"]
+  platforms = ["linux/amd64", "linux/arm64"]
 }
 
 target "backend" {
