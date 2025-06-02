@@ -9,10 +9,11 @@ RUN npm install
 COPY . .
 
 EXPOSE 5173
-CMD ["npm", "run", "dev"]  # Runs Vite on port 5173
+# Runs Vite on port 5173
+CMD ["npm", "run", "dev"]  
 
 # ===== PRODUCTION BUILD STAGE =====
-FROM node:18-alpine as builder
+FROM node:18-slim as builder
 
 WORKDIR /app
 
@@ -20,8 +21,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build  # Outputs to /app/dist
-
+# Outputs to /app/dist
+RUN echo "=== npm run build starting ===" && npm run build
 # ===== PRODUCTION SERVE STAGE (NGINX) =====
 FROM nginx:alpine as prod
 

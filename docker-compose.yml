@@ -1,20 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
   frontend:
     build:
       context: ./frontend
-      target: dev  # Uses the dev stage
+      target: dev # Uses the dev stage
     ports:
-      - "5173:5173"  # Vite default port
+      - "5173:5173" # Vite default port
     volumes:
-      - ./frontend:/app  # Live code sync
+      - ./frontend:/app # Live code sync
       - /app/node_modules
     environment:
       - NODE_ENV=development
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      target: dev
     ports:
       - "4000:4000"
     volumes:
